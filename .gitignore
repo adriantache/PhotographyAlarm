@@ -13,6 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+/.idea/sonarlint
+/.idea/sonarlint/issuestore
 /.idea/sonarlint/issuestore/0/6/06f414a377d0e38649ab0058ec248fecbc68e49d
 /.idea/sonarlint/issuestore/0/7/0712df971a99ac4d2fccb8e0fb19f377f3374cca
 /.idea/sonarlint/issuestore/1/6/167ec24be62ace29a59d4b9590fbc552729da11c
@@ -37,7 +39,8 @@ local.properties
 /.idea/sonarlint/issuestore/e/2/e2e59b3b04cf47fbacb247eb35337ff8f6eecda9
 /.idea/sonarlint/issuestore/e/b/ebbe3ef5a6d3bacb92ca53b69522939ed13b6012
 /.idea/sonarlint/issuestore/f/9/f9b3dafd19f631901842f21119a0e077caadad29
-/.idea/sonarlint/issuestore/index.pb
+/.idea/sonarlint/issuestore/index.
+/.idea/sonarlint/securityhotspotstore
 /.idea/sonarlint/securityhotspotstore/0/6/06f414a377d0e38649ab0058ec248fecbc68e49d
 /.idea/sonarlint/securityhotspotstore/0/7/0712df971a99ac4d2fccb8e0fb19f377f3374cca
 /.idea/sonarlint/securityhotspotstore/1/6/167ec24be62ace29a59d4b9590fbc552729da11c
