@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -15,4 +16,10 @@ fun SunriseView(sunrise: String) {
             .requiredHeight(100.dp),
         text = "Sunrise at $sunrise",
     )
+}
+
+@Preview
+@Composable
+private fun SunriseViewPreview() {
+    SunriseView("6:45")
 }

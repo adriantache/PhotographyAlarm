@@ -21,6 +21,7 @@ import com.adriantache.photographyalarm.logic.AppState.GetWeather
 import com.adriantache.photographyalarm.logic.AppState.Init
 import com.adriantache.photographyalarm.logic.AppState.RequestPermissions
 import com.adriantache.photographyalarm.logic.AppState.Success
+import com.adriantache.photographyalarm.ui.view.StatusView
 
 @Composable
 fun MainUi(appLogic: AppLogic) {
@@ -38,9 +39,9 @@ fun MainUi(appLogic: AppLogic) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (val localStatus = status) {
-            FindLocation -> Text("Getting location data...")
-            GetSunrise -> Text("Getting sunrise data...")
-            GetWeather -> Text("Getting weather data...")
+            FindLocation -> StatusView("Getting location data...")
+            GetSunrise -> StatusView("Getting sunrise data...")
+            GetWeather -> StatusView("Getting weather data...")
             Init -> Unit
             is RequestPermissions -> Text("Requesting permissions...")
             is Success -> SuccessScreen(data = localStatus.results) {
