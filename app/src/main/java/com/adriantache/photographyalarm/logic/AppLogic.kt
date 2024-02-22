@@ -11,7 +11,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.adriantache.photographyalarm.api.ApiCalls
+import com.adriantache.photographyalarm.logic.AppState.FindLocation
+import com.adriantache.photographyalarm.logic.AppState.GetSunrise
+import com.adriantache.photographyalarm.logic.AppState.GetWeather
 import com.adriantache.photographyalarm.logic.AppState.Init
+import com.adriantache.photographyalarm.logic.AppState.RequestPermissions
+import com.adriantache.photographyalarm.logic.AppState.Success
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.delay
@@ -30,31 +35,25 @@ class AppLogic(
     private val _statusFlow: MutableStateFlow<AppState> = MutableStateFlow(Init)
     val statusFlow: StateFlow<AppState> = _statusFlow
 
-    private val _statusTextFlow: MutableStateFlow<String> = MutableStateFlow("[Init]")
-    val statusTextFlow: StateFlow<String> = _statusTextFlow
-
-    private val _alarmTime: MutableStateFlow<LocalTime?> = MutableStateFlow(null)
-    val alarmTime: StateFlow<LocalTime?> = _alarmTime
-
     private val apiCalls by lazy { ApiCalls() }
 
     fun startAppFlow() {
-        _statusTextFlow.value = "Getting permission."
+        _statusFlow.value = RequestPermissions()
 
         onRequestPermissions(arrayOf(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION))
     }
 
     suspend fun onPermissionsGranted(allPermissionsGranted: Boolean) {
         if (!allPermissionsGranted) {
-            _statusTextFlow.value = "Permissions denied."
+            _statusFlow.value = RequestPermissions(false)
             return
         }
 
-        _statusTextFlow.value = "Getting location."
+        _statusFlow.value = FindLocation
 
         val location = getLocation() ?: return
 
-        _statusTextFlow.value = "Getting sunrise / sunset times."
+        _statusFlow.value = GetSunrise
 
         val sunriseData = apiCalls.getSunriseData(location)
 
@@ -63,7 +62,7 @@ class AppLogic(
             return
         }
 
-        _statusTextFlow.value = "Getting weather forecast."
+        _statusFlow.value = GetWeather
 
         val weatherData = apiCalls.getWeatherData(location)
 
@@ -72,33 +71,33 @@ class AppLogic(
             return
         }
 
-        _statusTextFlow.value += "\nWeather: ${weatherData.getOrNull()}"
-
         val sunrise = sunriseData.getOrThrow()!!.sunrise!!
         val weatherPoints = weatherData.getOrThrow()
         val weather = weatherPoints?.minBy { Duration.between(sunrise, it.date).toMillis().absoluteValue }
 
         if (weather == null) {
-            _statusTextFlow.value = "Bad weather data."
+            Toast.makeText(context, "Error with weather data. $weatherData", Toast.LENGTH_SHORT).show()
             return
         }
-
-        _statusTextFlow.value = "Sunrise: ${sunrise.toLocalTime()} \n" +
-                "Weather: ${weather.ids.map { it.description }} at ${weather.date}"
 
         // TODO: tweak conditions
         val isGoodWeather = weather.ids.any { it.id in 800..802 }
 
-        if (isGoodWeather) {
-            _alarmTime.value = sunrise.minusMinutes(30).toLocalTime()
-        }
+        _statusFlow.value = Success(
+            ResultData(
+                sunrise = sunrise.toLocalTime().toString(),
+                weather = "${weather.ids.map { it.description }} at ${weather.date.toLocalTime()}",
+                shouldSetAlarm = isGoodWeather,
+                alarmTime = sunrise.minusMinutes(30).toLocalTime()?.takeIf { isGoodWeather },
+            )
+        )
     }
 
-    fun setAlarm() {
+    fun setAlarm(alarmTime: LocalTime) {
         val intent = Intent(AlarmClock.ACTION_SET_ALARM).apply {
             putExtra(AlarmClock.EXTRA_MESSAGE, "Wake up for the sunrise!")
-            putExtra(AlarmClock.EXTRA_HOUR, alarmTime.value?.hour)
-            putExtra(AlarmClock.EXTRA_MINUTES, alarmTime.value?.minute)
+            putExtra(AlarmClock.EXTRA_HOUR, alarmTime.hour)
+            putExtra(AlarmClock.EXTRA_MINUTES, alarmTime.minute)
         }
 
         context.startActivity(intent)
@@ -115,7 +114,7 @@ class AppLogic(
         }
 
         if (location == null) {
-            _statusTextFlow.value = "Cannot get location."
+            Toast.makeText(context, "Cannot retrieve location!", Toast.LENGTH_SHORT).show()
         }
 
         return location
@@ -125,7 +124,7 @@ class AppLogic(
         if (ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(context, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED
         ) {
-            _statusTextFlow.value = "Permission denied."
+            Toast.makeText(context, "Location permission denied!", Toast.LENGTH_SHORT).show()
             cont.resume(null)
         }
 

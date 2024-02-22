@@ -1,16 +1,9 @@
 package com.adriantache.photographyalarm.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,15 +12,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adriantache.photographyalarm.logic.AppLogic
+import com.adriantache.photographyalarm.logic.AppState.FindLocation
+import com.adriantache.photographyalarm.logic.AppState.GetSunrise
+import com.adriantache.photographyalarm.logic.AppState.GetWeather
+import com.adriantache.photographyalarm.logic.AppState.Init
+import com.adriantache.photographyalarm.logic.AppState.RequestPermissions
+import com.adriantache.photographyalarm.logic.AppState.Success
 
 @Composable
 fun MainUi(appLogic: AppLogic) {
-    val statusText by appLogic.statusTextFlow.collectAsState()
-    val alarmTimeStatus by appLogic.alarmTime.collectAsState()
+    val status by appLogic.statusFlow.collectAsState()
 
     LaunchedEffect(Unit) {
         appLogic.startAppFlow()
@@ -40,29 +37,14 @@ fun MainUi(appLogic: AppLogic) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Status: $statusText",
-            )
-
-            Spacer(Modifier.width(8.dp))
-
-            Icon(
-                painterResource(id = android.R.drawable.ic_menu_rotate),
-                modifier = Modifier
-                    .clickable { appLogic.startAppFlow() }
-                    .requiredSize(24.dp),
-                contentDescription = null,
-            )
-        }
-
-        if (alarmTimeStatus != null) {
-            Button(onClick = { appLogic.setAlarm() }) {
-                Text("Set alarm for tomorrow morning!")
+        when (val localStatus = status) {
+            FindLocation -> Text("Getting location data...")
+            GetSunrise -> Text("Getting sunrise data...")
+            GetWeather -> Text("Getting weather data...")
+            Init -> Unit
+            is RequestPermissions -> Text("Requesting permissions...")
+            is Success -> SuccessScreen(data = localStatus.results) {
+                localStatus.results.alarmTime?.let { appLogic.setAlarm(it) }
             }
         }
     }
