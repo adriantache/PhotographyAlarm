@@ -6,6 +6,7 @@ import com.adriantache.photographyalarm.api.sunrise.SunriseApi
 import com.adriantache.photographyalarm.api.weather.WeatherApi
 import com.adriantache.photographyalarm.model.SunriseInfo
 import com.adriantache.photographyalarm.model.WeatherInfo
+import com.adriantache.photographyalarm.room.AppDao
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -19,7 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter.ISO_DATE
 
 class ApiCalls(
-//    private val dao: AppDao,
+    private val dao: AppDao,
 ) {
     private val okHttpClient = getOkHttpClient()
     private val retrofit = getRetrofit()

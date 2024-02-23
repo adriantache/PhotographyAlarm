@@ -5,6 +5,9 @@ import com.adriantache.photographyalarm.model.WeatherInfo
 import com.adriantache.photographyalarm.model.WeatherInfoPoint
 import kotlinx.serialization.Serializable
 
+private const val WEATHER_ICON_1 = "https://openweathermap.org/img/wn/"
+private const val WEATHER_ICON_2 = "@2x.png"
+
 @Serializable
 data class WeatherResponse(
     val list: List<WeatherResponseDatapoint>,
@@ -20,6 +23,7 @@ data class WeatherResponse(
                         id = it.id,
                         main = it.main,
                         description = it.description,
+                        iconUrl = WEATHER_ICON_1 + it.icon + WEATHER_ICON_2,
                     )
                 },
             )
@@ -44,6 +48,7 @@ data class WeatherResponseWeather(
     val id: Int,
     val main: String,
     val description: String,
+    val icon: String,
 )
 
 /**

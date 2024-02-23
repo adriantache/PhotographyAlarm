@@ -26,7 +26,7 @@ object Converters {
         if (weatherInfoPointList == null) return null
 
         return weatherInfoPointList.joinToString(LIST_DELIMITER) { weatherInfoPoint ->
-            weatherInfoPoint.id.toString() + DELIMITER + weatherInfoPoint.main + DELIMITER + weatherInfoPoint.description
+            weatherInfoPoint.id.toString() + DELIMITER + weatherInfoPoint.main + DELIMITER + weatherInfoPoint.description + DELIMITER + weatherInfoPoint.iconUrl
         }
     }
 
@@ -43,8 +43,13 @@ object Converters {
     internal fun fromStringPoint(value: String?): WeatherInfoPoint? {
         if (value == null) return null
 
-        val (id, main, description) = value.split(DELIMITER)
+        val (id, main, description, iconUrl) = value.split(DELIMITER)
 
-        return WeatherInfoPoint(id = id.toInt(), main = main, description = description)
+        return WeatherInfoPoint(
+            id = id.toInt(),
+            main = main,
+            description = description,
+            iconUrl = iconUrl,
+        )
     }
 }

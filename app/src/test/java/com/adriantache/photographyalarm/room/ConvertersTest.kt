@@ -5,18 +5,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-
 class ConvertersTest {
     private val date = LocalDate.of(2024, 2, 21).atStartOfDay()
     private val timestamp = 1708473600L
 
     private val infoPoints = listOf(
-        WeatherInfoPoint(123, "Bla", "Blablabla"),
-        WeatherInfoPoint(122, "Bladasd", "sdasda"),
-        WeatherInfoPoint(1, "sadasda", "fgedfgweaf"),
+        WeatherInfoPoint(123, "Bla", "Blablabla", "http:\\google.com"),
+        WeatherInfoPoint(122, "Bladasd", "sdasda", "http:\\google.com"),
+        WeatherInfoPoint(1, "sadasda", "fgedfgweaf", "http:\\google.com"),
     )
-    private val infoPointsString = "123-Bla-Blablabla|122-Bladasd-sdasda|1-sadasda-fgedfgweaf"
-    private val firstInfoPointString = "123-Bla-Blablabla"
+    private val infoPointsString =
+        "123-Bla-Blablabla-http:\\google.com|122-Bladasd-sdasda-http:\\google.com|1-sadasda-fgedfgweaf-http:\\google.com"
+    private val firstInfoPointString = "123-Bla-Blablabla-http:\\google.com"
 
     @Test
     fun fromTimestamp() {

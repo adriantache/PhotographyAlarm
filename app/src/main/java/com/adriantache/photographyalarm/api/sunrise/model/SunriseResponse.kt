@@ -11,16 +11,16 @@ data class SunriseResponse(
     val results: SunriseResponseData,
     val status: String,
 ) {
-    fun toInfo(tomorrow: LocalDate): SunriseInfo {
+    fun toInfo(tomorrow: LocalDate): SunriseInfo? {
         return with(results) {
             SunriseInfo(
-                sunrise = parseDate(sunrise, timezone, tomorrow),
-                sunset = parseDate(sunset, timezone, tomorrow),
-                firstLight = parseDate(first_light, timezone, tomorrow),
-                lastLight = parseDate(last_light, timezone, tomorrow),
-                dawn = parseDate(dawn, timezone, tomorrow),
-                dusk = parseDate(dusk, timezone, tomorrow),
-                solarNoon = parseDate(solar_noon, timezone, tomorrow),
+                sunrise = parseDate(sunrise, timezone, tomorrow) ?: return null,
+                sunset = parseDate(sunset, timezone, tomorrow) ?: return null,
+                firstLight = parseDate(first_light, timezone, tomorrow) ?: return null,
+                lastLight = parseDate(last_light, timezone, tomorrow) ?: return null,
+                dawn = parseDate(dawn, timezone, tomorrow) ?: return null,
+                dusk = parseDate(dusk, timezone, tomorrow) ?: return null,
+                solarNoon = parseDate(solar_noon, timezone, tomorrow) ?: return null,
                 dayLength = day_length,
             )
         }

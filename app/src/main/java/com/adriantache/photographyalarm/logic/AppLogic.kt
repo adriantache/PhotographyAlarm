@@ -10,7 +10,8 @@ import android.provider.AlarmClock
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import com.adriantache.photographyalarm.api.ApiCalls
+import com.adriantache.photographyalarm.MainApplication
+import com.adriantache.photographyalarm.R
 import com.adriantache.photographyalarm.logic.AppState.FindLocation
 import com.adriantache.photographyalarm.logic.AppState.GetSunrise
 import com.adriantache.photographyalarm.logic.AppState.GetWeather
@@ -35,7 +36,7 @@ class AppLogic(
     private val _statusFlow: MutableStateFlow<AppState> = MutableStateFlow(Init)
     val statusFlow: StateFlow<AppState> = _statusFlow
 
-    private val apiCalls by lazy { ApiCalls() }
+    private val apiCalls by lazy { (context.applicationContext as MainApplication).apiCalls }
 
     fun startAppFlow() {
         _statusFlow.value = RequestPermissions()
@@ -71,22 +72,32 @@ class AppLogic(
             return
         }
 
-        val sunrise = sunriseData.getOrThrow()!!.sunrise!!
-        val weatherPoints = weatherData.getOrThrow()
-        val weather = weatherPoints?.minBy { Duration.between(sunrise, it.date).toMillis().absoluteValue }
+        val sunrise = sunriseData.getOrThrow()!!.sunrise
+        val weatherPoints = weatherData.getOrThrow()!!
+        val targetWeather = weatherPoints.minBy { Duration.between(sunrise, it.date).toMillis().absoluteValue }
 
-        if (weather == null) {
-            Toast.makeText(context, "Error with weather data. $weatherData", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val weatherIndex = weatherPoints.indexOf(targetWeather)
+        val firstWeatherIndex = (weatherIndex - 1).coerceAtLeast(0)
+        val firstWeather = weatherPoints[firstWeatherIndex]
+
+        val lastWeatherIndex = (weatherIndex + 1).coerceAtMost(weatherPoints.size - 1)
+        val lastWeather = weatherPoints[lastWeatherIndex]
 
         // TODO: tweak conditions
-        val isGoodWeather = weather.ids.any { it.id in 800..802 }
+        val isGoodWeather = targetWeather.ids.any { it.id in 800..802 }
 
         _statusFlow.value = Success(
             ResultData(
-                sunrise = sunrise.toLocalTime().toString(),
-                weather = "${weather.ids.map { it.description }} at ${weather.date.toLocalTime()}",
+                sunrise = listOf(
+                    SunriseResultData(time = sunriseData.getOrThrow()!!.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
+                    SunriseResultData(time = sunriseData.getOrThrow()!!.dawn, iconRes = R.drawable.noun_dawn_6475869),
+                    SunriseResultData(time = sunrise, iconRes = R.drawable.noun_sun_6475868),
+                ),
+                weather = listOf(
+                    WeatherResultData(iconUrl = firstWeather.ids.first().iconUrl, time = firstWeather.date),
+                    WeatherResultData(iconUrl = targetWeather.ids.first().iconUrl, time = targetWeather.date),
+                    WeatherResultData(iconUrl = lastWeather.ids.first().iconUrl, time = lastWeather.date),
+                ),
                 shouldSetAlarm = isGoodWeather,
                 alarmTime = sunrise.minusMinutes(30).toLocalTime()?.takeIf { isGoodWeather },
             )
