@@ -29,7 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.adriantache.photographyalarm.logic.ResultData
+import com.adriantache.photographyalarm.model.ResultData
 
 @Composable
 fun TimelineView(data: ResultData) {
@@ -96,9 +96,13 @@ fun TimelineView(data: ResultData) {
             Text(data.minTime.toString(), color = darkColor)
 
             Spacer(Modifier.weight(1f))
+            Text("...", color = darkColor)
+            Spacer(Modifier.weight(1f))
 
             Text(data.midPoint.toString(), color = darkColor)
 
+            Spacer(Modifier.weight(1f))
+            Text("...", color = darkColor)
             Spacer(Modifier.weight(1f))
 
             Text(data.maxTime.toString(), color = darkColor)

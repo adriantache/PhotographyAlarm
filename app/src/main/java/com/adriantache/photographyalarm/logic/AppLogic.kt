@@ -10,11 +10,10 @@ import android.provider.AlarmClock
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import com.adriantache.photographyalarm.MainApplication
-import com.adriantache.photographyalarm.R
+import com.adriantache.photographyalarm.data.Repository
+import com.adriantache.photographyalarm.logic.AppState.Error
 import com.adriantache.photographyalarm.logic.AppState.FindLocation
-import com.adriantache.photographyalarm.logic.AppState.GetSunrise
-import com.adriantache.photographyalarm.logic.AppState.GetWeather
+import com.adriantache.photographyalarm.logic.AppState.GetApiData
 import com.adriantache.photographyalarm.logic.AppState.Init
 import com.adriantache.photographyalarm.logic.AppState.RequestPermissions
 import com.adriantache.photographyalarm.logic.AppState.Success
@@ -23,11 +22,9 @@ import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.time.Duration
 import java.time.LocalTime
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.absoluteValue
 
 class AppLogic(
     private val context: Context,
@@ -36,7 +33,7 @@ class AppLogic(
     private val _statusFlow: MutableStateFlow<AppState> = MutableStateFlow(Init)
     val statusFlow: StateFlow<AppState> = _statusFlow
 
-    private val apiCalls by lazy { (context.applicationContext as MainApplication).apiCalls }
+    private val repository by lazy { Repository(context) }
 
     fun startAppFlow() {
         _statusFlow.value = RequestPermissions()
@@ -54,53 +51,11 @@ class AppLogic(
 
         val location = getLocation() ?: return
 
-        _statusFlow.value = GetSunrise
+        _statusFlow.value = GetApiData
 
-        val sunriseData = apiCalls.getSunriseData(location)
+        val data = repository.getData(location)
 
-        if (sunriseData.getOrNull()?.sunrise == null) {
-            Toast.makeText(context, "Cannot get sunrise data.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        _statusFlow.value = GetWeather
-
-        val weatherData = apiCalls.getWeatherData(location)
-
-        if (weatherData.getOrNull() == null) {
-            Toast.makeText(context, "Cannot get weather data. $weatherData", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val sunrise = sunriseData.getOrThrow()!!.sunrise
-        val weatherPoints = weatherData.getOrThrow()!!
-        val targetWeather = weatherPoints.minBy { Duration.between(sunrise, it.date).toMillis().absoluteValue }
-
-        val weatherIndex = weatherPoints.indexOf(targetWeather)
-        val firstWeatherIndex = (weatherIndex - 1).coerceAtLeast(0)
-        val firstWeather = weatherPoints[firstWeatherIndex]
-
-        val lastWeatherIndex = (weatherIndex + 1).coerceAtMost(weatherPoints.size - 1)
-        val lastWeather = weatherPoints[lastWeatherIndex]
-
-        // TODO: tweak conditions
-        val isGoodWeather = targetWeather.ids.any { it.id in 800..802 }
-
-        _statusFlow.value = Success(
-            ResultData(
-                sunrise = listOf(
-                    SunriseResultData(time = sunriseData.getOrThrow()!!.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
-                    SunriseResultData(time = sunriseData.getOrThrow()!!.dawn, iconRes = R.drawable.noun_dawn_6475869),
-                    SunriseResultData(time = sunrise, iconRes = R.drawable.noun_sun_6475868),
-                ),
-                weather = listOf(
-                    WeatherResultData(iconUrl = firstWeather.ids.first().iconUrl, time = firstWeather.date),
-                    WeatherResultData(iconUrl = targetWeather.ids.first().iconUrl, time = targetWeather.date),
-                    WeatherResultData(iconUrl = lastWeather.ids.first().iconUrl, time = lastWeather.date),
-                ),
-                shouldSetAlarm = isGoodWeather,
-            )
-        )
+        _statusFlow.value = if (data != null) Success(data) else Error
     }
 
     fun setAlarm(alarmTime: LocalTime) {

@@ -1,4 +1,4 @@
-package com.adriantache.photographyalarm.api
+package com.adriantache.photographyalarm.data.api.util
 
 import java.time.Instant
 import java.time.LocalDate
@@ -10,7 +10,7 @@ import java.util.TimeZone
 
 fun parseDate(time: String): LocalTime? {
     val adjustedTime = if (time.indexOf(":") != 2) "0$time" else time
-    val pattern = "hh:mm:ss a";
+    val pattern = "hh:mm:ss a"
 
     return LocalTime.parse(adjustedTime, DateTimeFormatter.ofPattern(pattern))
 }

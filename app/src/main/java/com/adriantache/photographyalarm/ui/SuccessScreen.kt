@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.adriantache.photographyalarm.logic.ResultData
+import com.adriantache.photographyalarm.model.ResultData
 import com.adriantache.photographyalarm.ui.view.SetAlarmView
 import com.adriantache.photographyalarm.ui.view.SunriseView
 import com.adriantache.photographyalarm.ui.view.TimelineView

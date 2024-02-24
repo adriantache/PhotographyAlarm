@@ -1,12 +1,11 @@
-package com.adriantache.photographyalarm.api
+package com.adriantache.photographyalarm.data.api
 
 import android.location.Location
 import android.util.Log
-import com.adriantache.photographyalarm.api.sunrise.SunriseApi
-import com.adriantache.photographyalarm.api.weather.WeatherApi
+import com.adriantache.photographyalarm.data.api.sunrise.SunriseApi
+import com.adriantache.photographyalarm.data.api.weather.WeatherApi
 import com.adriantache.photographyalarm.model.SunriseInfo
 import com.adriantache.photographyalarm.model.WeatherInfo
-import com.adriantache.photographyalarm.room.AppDao
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -19,11 +18,9 @@ import retrofit2.create
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter.ISO_DATE
 
-class ApiCalls(
-    private val dao: AppDao,
-) {
-    private val okHttpClient = getOkHttpClient()
-    private val retrofit = getRetrofit()
+class ApiCalls {
+    private val okHttpClient: OkHttpClient = getOkHttpClient()
+    private val retrofit: Retrofit = getRetrofit()
 
     // TODO: get from database / save to database
     suspend fun getSunriseData(location: Location): Result<SunriseInfo?> {

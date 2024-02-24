@@ -1,6 +1,6 @@
-package com.adriantache.photographyalarm.api.weather.model
+package com.adriantache.photographyalarm.data.api.weather.model
 
-import com.adriantache.photographyalarm.api.parseTimestamp
+import com.adriantache.photographyalarm.data.api.util.parseTimestamp
 import com.adriantache.photographyalarm.model.WeatherInfo
 import com.adriantache.photographyalarm.model.WeatherInfoPoint
 import kotlinx.serialization.Serializable

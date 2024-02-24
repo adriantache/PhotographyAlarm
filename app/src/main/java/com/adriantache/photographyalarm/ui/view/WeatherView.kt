@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.adriantache.photographyalarm.logic.WeatherResultData
+import com.adriantache.photographyalarm.model.WeatherResultData
 import java.time.LocalDateTime
 
 @Composable
@@ -63,14 +63,17 @@ private fun WeatherViewPreview() {
             WeatherResultData(
                 iconUrl = iconUrl,
                 time = LocalDateTime.now(),
+                ids = emptyList(),
             ),
             WeatherResultData(
                 iconUrl = iconUrl,
                 time = LocalDateTime.now(),
+                ids = emptyList(),
             ),
             WeatherResultData(
                 iconUrl = iconUrl,
                 time = LocalDateTime.now(),
+                ids = emptyList(),
             ),
         )
     )

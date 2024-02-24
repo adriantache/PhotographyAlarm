@@ -1,7 +1,7 @@
-package com.adriantache.photographyalarm.api.weather
+package com.adriantache.photographyalarm.data.api.weather
 
 import com.adriantache.photographyalarm.BuildConfig
-import com.adriantache.photographyalarm.api.weather.model.WeatherResponse
+import com.adriantache.photographyalarm.data.api.weather.model.WeatherResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

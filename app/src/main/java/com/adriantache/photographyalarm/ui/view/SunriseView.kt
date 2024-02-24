@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.adriantache.photographyalarm.logic.SunriseResultData
+import com.adriantache.photographyalarm.model.SunriseResultData
 
 @Composable
 fun SunriseView(sunrise: List<SunriseResultData>) {

@@ -1,6 +1,6 @@
-package com.adriantache.photographyalarm.api.sunrise.model
+package com.adriantache.photographyalarm.data.api.sunrise.model
 
-import com.adriantache.photographyalarm.api.parseDate
+import com.adriantache.photographyalarm.data.api.util.parseDate
 import com.adriantache.photographyalarm.model.SunriseInfo
 import kotlinx.serialization.Serializable
 import java.time.LocalDate

@@ -1,6 +1,6 @@
-package com.adriantache.photographyalarm.api.sunrise
+package com.adriantache.photographyalarm.data.api.sunrise
 
-import com.adriantache.photographyalarm.api.sunrise.model.SunriseResponse
+import com.adriantache.photographyalarm.data.api.sunrise.model.SunriseResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
