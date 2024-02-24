@@ -7,8 +7,9 @@ data class ResultData(
     val sunrise: List<SunriseResultData>,
     val weather: List<WeatherResultData>,
     val shouldSetAlarm: Boolean,
-    val alarmTime: LocalTime? = null,
 ) {
+    val alarmTime: LocalTime = sunrise[2].timestamp.minusMinutes(30)
+
     val minTime: LocalTime =
         (sunrise.map { it.timestamp } + weather.map { it.timestamp }).minBy { it.toNanoOfDay() }.truncatedTo(ChronoUnit.MINUTES)
     val maxTime: LocalTime =

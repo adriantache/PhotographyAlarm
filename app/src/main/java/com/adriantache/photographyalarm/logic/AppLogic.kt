@@ -99,7 +99,6 @@ class AppLogic(
                     WeatherResultData(iconUrl = lastWeather.ids.first().iconUrl, time = lastWeather.date),
                 ),
                 shouldSetAlarm = isGoodWeather,
-                alarmTime = sunrise.minusMinutes(30).toLocalTime()?.takeIf { isGoodWeather },
             )
         )
     }
