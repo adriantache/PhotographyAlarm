@@ -59,16 +59,19 @@ class Repository(
             ),
             weather = listOf(
                 WeatherResultData(
+                    description = firstWeather.ids.first().description,
                     ids = firstWeather.ids.map { it.id },
                     iconUrl = firstWeather.ids.first().iconUrl,
                     time = firstWeather.date
                 ),
                 WeatherResultData(
+                    description = targetWeather.ids.first().description,
                     ids = targetWeather.ids.map { it.id },
                     iconUrl = targetWeather.ids.first().iconUrl,
                     time = targetWeather.date
                 ),
                 WeatherResultData(
+                    description = lastWeather.ids.first().description,
                     ids = lastWeather.ids.map { it.id },
                     iconUrl = lastWeather.ids.first().iconUrl,
                     time = lastWeather.date

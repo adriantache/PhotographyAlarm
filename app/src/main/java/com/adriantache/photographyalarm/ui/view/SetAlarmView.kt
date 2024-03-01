@@ -25,38 +25,51 @@ import java.time.LocalTime
 
 @Composable
 fun SetAlarmView(
+    weatherSummary: String,
     shouldSetAlarm: Boolean,
     alarmTime: LocalTime,
     onSetAlarm: () -> Unit,
 ) {
     val buttonColor = if (shouldSetAlarm) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
 
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Button(
-            shape = RoundedCornerShape(8.dp),
-            onClick = { onSetAlarm() },
-            colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+    ItemCard(title = "ALARM") {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = weatherSummary,
+            style = MaterialTheme.typography.titleSmall,
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier.padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Button(
+                shape = RoundedCornerShape(8.dp),
+                onClick = { onSetAlarm() },
+                colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
             ) {
-                Icon(
-                    modifier = Modifier.requiredSize(56.dp),
-                    painter = painterResource(id = R.drawable.alarm_icon),
-                    contentDescription = null
-                )
+                Column(
+                    modifier = Modifier.padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        modifier = Modifier.requiredSize(56.dp),
+                        painter = painterResource(id = R.drawable.alarm_icon),
+                        contentDescription = null
+                    )
 
-                Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(12.dp))
 
-                Text(
-                    "$alarmTime AM",
-                    style = MaterialTheme.typography.labelLarge,
-                )
+                    Text(
+                        "$alarmTime AM",
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
             }
         }
     }
@@ -68,6 +81,7 @@ private fun SetAlarmViewPreview() {
     SetAlarmView(
         shouldSetAlarm = true,
         alarmTime = LocalTime.now(),
-        onSetAlarm = {}
+        onSetAlarm = {},
+        weatherSummary = "test",
     )
 }

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,7 +21,9 @@ fun SuccessScreen(
     onSetAlarm: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
     ) {
         SunriseView(data.sunrise)
 
@@ -34,6 +38,7 @@ fun SuccessScreen(
         Spacer(Modifier.weight(1f))
 
         SetAlarmView(
+            weatherSummary = data.getWeatherSummary(),
             shouldSetAlarm = data.shouldSetAlarm,
             alarmTime = data.alarmTime,
             onSetAlarm = onSetAlarm

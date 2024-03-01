@@ -37,4 +37,16 @@ data class ResultData(
     fun getPercent(reference: LocalTime): Double {
         return (reference.toNanoOfDay() - minTime.toNanoOfDay()).toDouble() / timeDifference
     }
+
+    fun getWeatherSummary(): String {
+        val targetWeather = weather[1]
+        val prefix = "The weather is expected to be ${targetWeather.description} at ${targetWeather.time}."
+        val suffix = if (shouldSetAlarm) {
+            "To set an alarm, click the button below."
+        } else {
+            "If you still want to set an alarm, click the button below."
+        }
+
+        return "$prefix $suffix"
+    }
 }
