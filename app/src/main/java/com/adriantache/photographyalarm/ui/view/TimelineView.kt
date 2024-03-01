@@ -53,32 +53,32 @@ fun TimelineView(data: ResultData) {
                 screenWidth = it.size.width
             }
         ) {
-            val offset1 = data.getPercent(data.sunrise[0].timestamp)
+            val offset1 = data.getPercent(data.sunrise.firstLight.timestamp)
             Icon(
                 modifier = Modifier
                     .requiredSize(48.dp)
                     .offset(y = 0.dp, x = (screenWidthDp * offset1 - 48 * offset1).dp),
-                painter = painterResource(id = data.sunrise[0].iconRes),
+                painter = painterResource(id = data.sunrise.firstLight.iconRes),
                 contentDescription = null,
                 tint = darkColor,
             )
 
-            val offset2 = data.getPercent(data.sunrise[1].timestamp)
+            val offset2 = data.getPercent(data.sunrise.dawn.timestamp)
             Icon(
                 modifier = Modifier
                     .requiredSize(48.dp)
                     .offset(y = 0.dp, x = (screenWidthDp * offset2 - 48 * offset2).dp),
-                painter = painterResource(id = data.sunrise[1].iconRes),
+                painter = painterResource(id = data.sunrise.dawn.iconRes),
                 contentDescription = null,
                 tint = darkColor,
             )
 
-            val offset3 = data.getPercent(data.sunrise[2].timestamp)
+            val offset3 = data.getPercent(data.sunrise.sunrise.timestamp)
             Icon(
                 modifier = Modifier
                     .requiredSize(48.dp)
                     .offset(y = 0.dp, x = (screenWidthDp * offset3 - 48 * offset3).dp),
-                painter = painterResource(id = data.sunrise[2].iconRes),
+                painter = painterResource(id = data.sunrise.sunrise.iconRes),
                 contentDescription = null,
                 tint = darkColor,
             )
@@ -114,30 +114,30 @@ fun TimelineView(data: ResultData) {
                 .padding(horizontal = 16.dp)
                 .background(Color.Black, RoundedCornerShape(8.dp))
         ) {
-            val offset1 = data.getPercent(data.weather[0].timestamp)
+            val offset1 = data.getPercent(data.weather.before.timestamp)
             AsyncImage(
                 modifier = Modifier
                     .requiredSize(48.dp)
                     .offset(y = 0.dp, x = (screenWidthDp * offset1 - 48 * offset1).dp),
-                model = data.weather[0].iconUrl,
+                model = data.weather.before.iconUrl,
                 contentDescription = null,
             )
 
-            val offset2 = data.getPercent(data.weather[1].timestamp)
+            val offset2 = data.getPercent(data.weather.closest.timestamp)
             AsyncImage(
                 modifier = Modifier
                     .requiredSize(48.dp)
                     .offset(y = 0.dp, x = (screenWidthDp * offset2 - 48 * offset2).dp),
-                model = data.weather[1].iconUrl,
+                model = data.weather.closest.iconUrl,
                 contentDescription = null,
             )
 
-            val offset3 = data.getPercent(data.weather[2].timestamp)
+            val offset3 = data.getPercent(data.weather.after.timestamp)
             AsyncImage(
                 modifier = Modifier
                     .requiredSize(48.dp)
                     .offset(y = 0.dp, x = (screenWidthDp * offset3 - 48 * offset3).dp),
-                model = data.weather[2].iconUrl,
+                model = data.weather.after.iconUrl,
                 contentDescription = null,
             )
         }

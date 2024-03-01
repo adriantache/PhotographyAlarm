@@ -9,23 +9,23 @@ import java.time.temporal.ChronoUnit
 
 @Serializable
 data class ResultData(
-    val sunrise: List<SunriseResultData>,
-    val weather: List<WeatherResultData>,
+    val sunrise: SunriseResultSummary,
+    val weather: WeatherResultSummary,
     @Serializable(LocalDateTimeAsLongSerializer::class)
     val retrievedAt: LocalDateTime = LocalDateTime.now(),
 ) {
-    val shouldSetAlarm = weather[1].ids.any { it in 800..802 }
+    val shouldSetAlarm = weather.shouldSetAlarm
 
     @Serializable(LocalTimeAsLongSerializer::class)
-    val alarmTime: LocalTime = sunrise[2].timestamp.minusMinutes(30)
+    val alarmTime: LocalTime = sunrise.sunrise.timestamp.minusMinutes(30)
 
     @Serializable(LocalTimeAsLongSerializer::class)
-    val minTime: LocalTime = (sunrise.map { it.timestamp } + weather.map { it.timestamp })
+    val minTime: LocalTime = listOf(sunrise.minTime, weather.minTime)
         .minBy { it.toNanoOfDay() }
         .truncatedTo(ChronoUnit.MINUTES)
 
     @Serializable(LocalTimeAsLongSerializer::class)
-    val maxTime: LocalTime = (sunrise.map { it.timestamp } + weather.map { it.timestamp })
+    val maxTime: LocalTime = listOf(sunrise.maxTime, weather.maxTime)
         .maxBy { it.toNanoOfDay() }
         .truncatedTo(ChronoUnit.MINUTES)
 
@@ -39,8 +39,7 @@ data class ResultData(
     }
 
     fun getWeatherSummary(): String {
-        val targetWeather = weather[1]
-        val prefix = "The weather is expected to be ${targetWeather.description} at ${targetWeather.time}."
+        val prefix = "The weather is expected to be ${weather.closest.description} at ${weather.closest.time}."
         val suffix = if (shouldSetAlarm) {
             "To set an alarm, click the button below."
         } else {

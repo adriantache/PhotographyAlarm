@@ -11,10 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.adriantache.photographyalarm.model.SunriseResultData
+import com.adriantache.photographyalarm.model.SunriseResultSummary
 
 @Composable
-fun SunriseView(sunrise: List<SunriseResultData>) {
+fun SunriseView(sunrise: SunriseResultSummary) {
     ItemCard(title = "SUNRISE") {
         Row(
             modifier = Modifier
@@ -24,8 +24,8 @@ fun SunriseView(sunrise: List<SunriseResultData>) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SunriseItemView(
-                iconRes = sunrise[0].iconRes,
-                time = sunrise[0].time
+                iconRes = sunrise.firstLight.iconRes,
+                time = sunrise.firstLight.time
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -38,8 +38,8 @@ fun SunriseView(sunrise: List<SunriseResultData>) {
             Spacer(modifier = Modifier.weight(1f))
 
             SunriseItemView(
-                iconRes = sunrise[1].iconRes,
-                time = sunrise[1].time
+                iconRes = sunrise.dawn.iconRes,
+                time = sunrise.dawn.time
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -52,8 +52,8 @@ fun SunriseView(sunrise: List<SunriseResultData>) {
             Spacer(modifier = Modifier.weight(1f))
 
             SunriseItemView(
-                iconRes = sunrise[2].iconRes,
-                time = sunrise[2].time
+                iconRes = sunrise.sunrise.iconRes,
+                time = sunrise.sunrise.time
             )
         }
     }

@@ -8,7 +8,9 @@ import com.adriantache.photographyalarm.data.api.ApiCalls
 import com.adriantache.photographyalarm.data.cache.Preferences
 import com.adriantache.photographyalarm.model.ResultData
 import com.adriantache.photographyalarm.model.SunriseResultData
+import com.adriantache.photographyalarm.model.SunriseResultSummary
 import com.adriantache.photographyalarm.model.WeatherResultData
+import com.adriantache.photographyalarm.model.WeatherResultSummary
 import java.time.Duration
 import java.time.ZoneOffset
 import kotlin.math.absoluteValue
@@ -52,25 +54,25 @@ class Repository(
         val lastWeather = weatherPoints[lastWeatherIndex]
 
         val data = ResultData(
-            sunrise = listOf(
-                SunriseResultData(time = sunriseData.getOrThrow()!!.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
-                SunriseResultData(time = sunriseData.getOrThrow()!!.dawn, iconRes = R.drawable.noun_dawn_6475869),
-                SunriseResultData(time = sunrise, iconRes = R.drawable.noun_sun_6475868),
+            sunrise = SunriseResultSummary(
+                firstLight = SunriseResultData(time = sunriseData.getOrThrow()!!.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
+                dawn = SunriseResultData(time = sunriseData.getOrThrow()!!.dawn, iconRes = R.drawable.noun_dawn_6475869),
+                sunrise = SunriseResultData(time = sunrise, iconRes = R.drawable.noun_sun_6475868),
             ),
-            weather = listOf(
-                WeatherResultData(
+            weather = WeatherResultSummary(
+                before = WeatherResultData(
                     description = firstWeather.ids.first().description,
                     ids = firstWeather.ids.map { it.id },
                     iconUrl = firstWeather.ids.first().iconUrl,
                     time = firstWeather.date
                 ),
-                WeatherResultData(
+                closest = WeatherResultData(
                     description = targetWeather.ids.first().description,
                     ids = targetWeather.ids.map { it.id },
                     iconUrl = targetWeather.ids.first().iconUrl,
                     time = targetWeather.date
                 ),
-                WeatherResultData(
+                after = WeatherResultData(
                     description = lastWeather.ids.first().description,
                     ids = lastWeather.ids.map { it.id },
                     iconUrl = lastWeather.ids.first().iconUrl,

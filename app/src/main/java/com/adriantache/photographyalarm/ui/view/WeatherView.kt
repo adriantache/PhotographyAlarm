@@ -13,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adriantache.photographyalarm.model.WeatherResultData
+import com.adriantache.photographyalarm.model.WeatherResultSummary
 import java.time.LocalDateTime
 
 @Composable
-fun WeatherView(weather: List<WeatherResultData>) {
+fun WeatherView(weather: WeatherResultSummary) {
     ItemCard(title = "WEATHER") {
         Row(
             modifier = Modifier
@@ -25,7 +26,10 @@ fun WeatherView(weather: List<WeatherResultData>) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            WeatherItemView(iconUrl = weather[0].iconUrl, time = weather[0].time)
+            WeatherItemView(
+                iconUrl = weather.before.iconUrl,
+                time = weather.before.time
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -36,7 +40,10 @@ fun WeatherView(weather: List<WeatherResultData>) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            WeatherItemView(iconUrl = weather[1].iconUrl, time = weather[1].time)
+            WeatherItemView(
+                iconUrl = weather.closest.iconUrl,
+                time = weather.closest.time
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -47,7 +54,10 @@ fun WeatherView(weather: List<WeatherResultData>) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            WeatherItemView(iconUrl = weather[2].iconUrl, time = weather[2].time)
+            WeatherItemView(
+                iconUrl = weather.after.iconUrl,
+                time = weather.after.time
+            )
         }
     }
 }
@@ -58,7 +68,7 @@ private fun WeatherViewPreview() {
     val iconUrl = "http://openweathermap.org/img/wn/01d@2x.png"
 
     WeatherView(
-        listOf(
+        WeatherResultSummary(
             WeatherResultData(
                 description = "",
                 iconUrl = iconUrl,
