@@ -1,33 +1,38 @@
 package com.adriantache.photographyalarm.model
 
+import com.adriantache.photographyalarm.R
 import com.adriantache.photographyalarm.data.LocalDateTimeAsLongSerializer
 import com.adriantache.photographyalarm.data.LocalTimeAsLongSerializer
 import kotlinx.serialization.Serializable
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 
 @Serializable
 data class ResultData(
+    val isSunrise: Boolean,
     val sunrise: SunriseResultSummary,
-    val weather: WeatherResultSummary,
+    val sunset: SunsetResultSummary,
     @Serializable(LocalDateTimeAsLongSerializer::class)
     val retrievedAt: LocalDateTime = LocalDateTime.now(),
 ) {
+    val weather = if (isSunrise) sunrise.weather else sunset.weather
+
     val shouldSetAlarm = weather.shouldSetAlarm
 
     @Serializable(LocalTimeAsLongSerializer::class)
-    val alarmTime: LocalTime = sunrise.sunrise.timestamp.minusMinutes(30)
+    val alarmTime: LocalTime = run {
+        val datapoint = if (isSunrise) sunrise.sunrise else sunset.sunset
+
+        datapoint.timestamp.minusMinutes(30)
+    }
 
     @Serializable(LocalTimeAsLongSerializer::class)
-    val minTime: LocalTime = listOf(sunrise.minTime, weather.minTime)
-        .minBy { it.toNanoOfDay() }
-        .truncatedTo(ChronoUnit.MINUTES)
+    val minTime: LocalTime = if (isSunrise) sunrise.minTime else sunset.minTime
 
     @Serializable(LocalTimeAsLongSerializer::class)
-    val maxTime: LocalTime = listOf(sunrise.maxTime, weather.maxTime)
-        .maxBy { it.toNanoOfDay() }
-        .truncatedTo(ChronoUnit.MINUTES)
+    val maxTime: LocalTime = if (isSunrise) sunrise.maxTime else sunset.maxTime
 
     private val timeDifference = maxTime.toNanoOfDay() - minTime.toNanoOfDay()
 
@@ -38,7 +43,7 @@ data class ResultData(
         return (reference.toNanoOfDay() - minTime.toNanoOfDay()).toDouble() / timeDifference
     }
 
-    fun getWeatherSummary(): String {
+    val weatherSummary: String = run {
         val prefix = "The weather is expected to be ${weather.closest.description} at ${weather.closest.time}."
         val suffix = if (shouldSetAlarm) {
             "To set an alarm, click the button below."
@@ -46,6 +51,65 @@ data class ResultData(
             "If you still want to set an alarm, click the button below."
         }
 
-        return "$prefix $suffix"
+        "$prefix $suffix"
+    }
+
+    companion object {
+        fun process(
+            isSunrise: Boolean,
+            sunriseData: SunriseInfo,
+            weatherPoints: List<WeatherInfo>
+        ): ResultData {
+            return ResultData(
+                isSunrise = isSunrise,
+                sunrise = SunriseResultSummary(
+                    firstLight = SunriseResultData(time = sunriseData.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
+                    dawn = SunriseResultData(time = sunriseData.dawn, iconRes = R.drawable.noun_dawn_6475869),
+                    sunrise = SunriseResultData(time = sunriseData.sunrise, iconRes = R.drawable.noun_sun_6475868),
+                    weather = getWeather(sunriseData.sunrise, weatherPoints),
+                ),
+                sunset = SunsetResultSummary(
+                    sunset = SunriseResultData(time = sunriseData.sunset, iconRes = R.drawable.noun_sun_6475868),
+                    dusk = SunriseResultData(time = sunriseData.dusk, iconRes = R.drawable.noun_dusk_6475877),
+                    lastLight = SunriseResultData(time = sunriseData.lastLight, iconRes = R.drawable.noun_sunrise_6475878),
+                    weather = getWeather(sunriseData.sunset, weatherPoints),
+                ),
+            )
+        }
+
+        private fun getWeather(
+            target: LocalDateTime,
+            weatherPoints: List<WeatherInfo>
+        ): WeatherResultSummary {
+            val targetWeather = weatherPoints.minBy { Duration.between(target, it.date).toMillis().absoluteValue }
+
+            val targetWeatherIndex = weatherPoints.indexOf(targetWeather)
+            val firstWeatherIndex = (targetWeatherIndex - 1).coerceAtLeast(0)
+            val firstWeather = weatherPoints[firstWeatherIndex]
+
+            val lastWeatherIndex = (targetWeatherIndex + 1).coerceAtMost(weatherPoints.size - 1)
+            val lastWeather = weatherPoints[lastWeatherIndex]
+
+            return WeatherResultSummary(
+                before = WeatherResultData(
+                    description = firstWeather.ids.first().description,
+                    ids = firstWeather.ids.map { it.id },
+                    iconUrl = firstWeather.ids.first().iconUrl,
+                    time = firstWeather.date
+                ),
+                closest = WeatherResultData(
+                    description = targetWeather.ids.first().description,
+                    ids = targetWeather.ids.map { it.id },
+                    iconUrl = targetWeather.ids.first().iconUrl,
+                    time = targetWeather.date
+                ),
+                after = WeatherResultData(
+                    description = lastWeather.ids.first().description,
+                    ids = lastWeather.ids.map { it.id },
+                    iconUrl = lastWeather.ids.first().iconUrl,
+                    time = lastWeather.date
+                ),
+            )
+        }
     }
 }

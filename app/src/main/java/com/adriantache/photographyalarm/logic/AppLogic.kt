@@ -35,6 +35,8 @@ class AppLogic(
 
     private val repository by lazy { Repository(context) }
 
+    private var isSunrise = true
+
     fun startAppFlow() {
         _statusFlow.value = RequestPermissions()
 
@@ -53,9 +55,24 @@ class AppLogic(
 
         _statusFlow.value = GetApiData
 
-        val data = repository.getData(location)
+        getData(location)
+    }
 
-        _statusFlow.value = if (data != null) Success(data) else Error
+    private suspend fun getData(location: Location) {
+        val data = repository.getData(location, isSunrise)
+
+        _statusFlow.value = if (data != null) {
+            Success(
+                results = data,
+                onSwitchSunrise = {
+                    isSunrise = !isSunrise
+
+                    getData(location)
+                }
+            )
+        } else {
+            Error
+        }
     }
 
     fun setAlarm(alarmTime: LocalTime) {

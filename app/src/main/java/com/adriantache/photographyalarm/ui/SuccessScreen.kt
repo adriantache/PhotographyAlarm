@@ -11,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.adriantache.photographyalarm.model.ResultData
 import com.adriantache.photographyalarm.ui.view.SetAlarmView
+import com.adriantache.photographyalarm.ui.view.SunriseToggle
 import com.adriantache.photographyalarm.ui.view.SunriseView
+import com.adriantache.photographyalarm.ui.view.SunsetView
 import com.adriantache.photographyalarm.ui.view.TimelineView
 import com.adriantache.photographyalarm.ui.view.WeatherView
 
@@ -19,13 +21,25 @@ import com.adriantache.photographyalarm.ui.view.WeatherView
 fun SuccessScreen(
     data: ResultData,
     onSetAlarm: () -> Unit,
+    onSwitchSunrise: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
-        SunriseView(data.sunrise)
+        SunriseToggle(
+            isSunrise = data.isSunrise,
+            onSwitchSunrise = onSwitchSunrise
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        if (data.isSunrise) {
+            SunriseView(data.sunrise)
+        } else {
+            SunsetView(data.sunset)
+        }
 
         Spacer(Modifier.height(8.dp))
 
@@ -38,7 +52,7 @@ fun SuccessScreen(
         Spacer(Modifier.weight(1f))
 
         SetAlarmView(
-            weatherSummary = data.getWeatherSummary(),
+            weatherSummary = data.weatherSummary,
             shouldSetAlarm = data.shouldSetAlarm,
             alarmTime = data.alarmTime,
             onSetAlarm = onSetAlarm

@@ -11,7 +11,10 @@ sealed interface AppState {
 
     data object GetApiData : AppState
 
-    data class Success(val results: ResultData) : AppState
+    data class Success(
+        val results: ResultData,
+        val onSwitchSunrise: suspend () -> Unit,
+    ) : AppState
 
     data object Error : AppState
 }

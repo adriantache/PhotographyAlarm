@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,9 +31,12 @@ import com.adriantache.photographyalarm.logic.AppState.Init
 import com.adriantache.photographyalarm.logic.AppState.RequestPermissions
 import com.adriantache.photographyalarm.logic.AppState.Success
 import com.adriantache.photographyalarm.ui.view.StatusView
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainUi(appLogic: AppLogic) {
+    val scope = rememberCoroutineScope()
+
     val status by appLogic.statusFlow.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -69,6 +73,11 @@ fun MainUi(appLogic: AppLogic) {
                 is Success -> SuccessScreen(
                     data = it.results,
                     onSetAlarm = { appLogic.setAlarm(it.results.alarmTime) },
+                    onSwitchSunrise = {
+                        scope.launch {
+                            it.onSwitchSunrise()
+                        }
+                    }
                 )
 
                 Error -> Box(

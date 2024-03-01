@@ -3,17 +3,10 @@ package com.adriantache.photographyalarm.data
 import android.content.Context
 import android.location.Location
 import android.widget.Toast
-import com.adriantache.photographyalarm.R
 import com.adriantache.photographyalarm.data.api.ApiCalls
 import com.adriantache.photographyalarm.data.cache.Preferences
 import com.adriantache.photographyalarm.model.ResultData
-import com.adriantache.photographyalarm.model.SunriseResultData
-import com.adriantache.photographyalarm.model.SunriseResultSummary
-import com.adriantache.photographyalarm.model.WeatherResultData
-import com.adriantache.photographyalarm.model.WeatherResultSummary
-import java.time.Duration
 import java.time.ZoneOffset
-import kotlin.math.absoluteValue
 
 private const val CACHE_EXPIRATION = 60 * 60 * 6 // 6 hours
 
@@ -22,11 +15,14 @@ class Repository(
     private val apiCalls: ApiCalls = ApiCalls(),
     private val preferences: Preferences = Preferences(context),
 ) {
-    suspend fun getData(location: Location): ResultData? {
+    suspend fun getData(
+        location: Location,
+        isSunrise: Boolean
+    ): ResultData? {
         val cache = preferences.getCache()
             ?.takeIf { System.currentTimeMillis() - it.retrievedAt.toInstant(ZoneOffset.UTC).toEpochMilli() <= CACHE_EXPIRATION }
 
-        if (cache != null) return cache
+        if (cache != null) return cache.copy(isSunrise = isSunrise)
 
         val sunriseData = apiCalls.getSunriseData(location)
 
@@ -42,43 +38,10 @@ class Repository(
             return null
         }
 
-        val sunrise = sunriseData.getOrThrow()!!.sunrise
-        val weatherPoints = weatherData.getOrThrow()!!
-        val targetWeather = weatherPoints.minBy { Duration.between(sunrise, it.date).toMillis().absoluteValue }
-
-        val weatherIndex = weatherPoints.indexOf(targetWeather)
-        val firstWeatherIndex = (weatherIndex - 1).coerceAtLeast(0)
-        val firstWeather = weatherPoints[firstWeatherIndex]
-
-        val lastWeatherIndex = (weatherIndex + 1).coerceAtMost(weatherPoints.size - 1)
-        val lastWeather = weatherPoints[lastWeatherIndex]
-
-        val data = ResultData(
-            sunrise = SunriseResultSummary(
-                firstLight = SunriseResultData(time = sunriseData.getOrThrow()!!.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
-                dawn = SunriseResultData(time = sunriseData.getOrThrow()!!.dawn, iconRes = R.drawable.noun_dawn_6475869),
-                sunrise = SunriseResultData(time = sunrise, iconRes = R.drawable.noun_sun_6475868),
-            ),
-            weather = WeatherResultSummary(
-                before = WeatherResultData(
-                    description = firstWeather.ids.first().description,
-                    ids = firstWeather.ids.map { it.id },
-                    iconUrl = firstWeather.ids.first().iconUrl,
-                    time = firstWeather.date
-                ),
-                closest = WeatherResultData(
-                    description = targetWeather.ids.first().description,
-                    ids = targetWeather.ids.map { it.id },
-                    iconUrl = targetWeather.ids.first().iconUrl,
-                    time = targetWeather.date
-                ),
-                after = WeatherResultData(
-                    description = lastWeather.ids.first().description,
-                    ids = lastWeather.ids.map { it.id },
-                    iconUrl = lastWeather.ids.first().iconUrl,
-                    time = lastWeather.date
-                ),
-            ),
+        val data = ResultData.process(
+            isSunrise = isSunrise,
+            sunriseData = sunriseData.getOrThrow()!!,
+            weatherPoints = weatherData.getOrThrow()!!,
         )
 
         preferences.saveCache(data)
