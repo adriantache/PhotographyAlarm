@@ -2,7 +2,6 @@ package com.adriantache.photographyalarm.ui.view
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,13 +25,10 @@ fun SunriseItemView(
     @DrawableRes iconRes: Int,
     time: String,
 ) {
-    val lightColor = if (isSystemInDarkTheme()) Color.White else Color.Black
-    val darkColor = if (lightColor == Color.White) Color.Black else Color.White
-
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
-            .background(lightColor, RoundedCornerShape(8.dp))
+            .background(Color.Black, RoundedCornerShape(8.dp))
             .padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,13 +37,13 @@ fun SunriseItemView(
             modifier = Modifier.requiredSize(48.dp),
             painter = painterResource(id = iconRes),
             contentDescription = null,
-            tint = darkColor,
+            tint = Color.White,
         )
 
         Spacer(Modifier.height(8.dp))
 
         Text(
-            color = darkColor,
+            color = Color.White,
             text = time,
         )
     }

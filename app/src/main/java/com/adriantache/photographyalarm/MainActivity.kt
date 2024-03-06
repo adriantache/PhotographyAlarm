@@ -14,7 +14,6 @@ import com.adriantache.photographyalarm.ui.MainUi
 import com.adriantache.photographyalarm.ui.theme.PhotographyAlarmTheme
 import kotlinx.coroutines.launch
 
-
 class MainActivity : ComponentActivity() {
     private val appLogic: AppLogic by lazy {
         AppLogic(

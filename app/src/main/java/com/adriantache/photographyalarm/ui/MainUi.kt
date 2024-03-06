@@ -1,10 +1,5 @@
 package com.adriantache.photographyalarm.ui
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.adriantache.photographyalarm.logic.AppLogic
 import com.adriantache.photographyalarm.logic.AppState.Error
@@ -50,41 +44,29 @@ fun MainUi(appLogic: AppLogic) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        AnimatedContent(
-            targetState = status,
-            label = "StateMachine",
-            transitionSpec = {
-                slideIn(initialOffset = {
-                    IntOffset(x = 0, y = -it.height)
-                }).togetherWith(
-                    fadeOut() + slideOut(targetOffset = { IntOffset(x = 0, y = it.height) })
-                )
-            },
-        ) {
-            when (it) {
-                FindLocation -> StatusView("Getting location data...")
+        when (val localStatus = status) {
+            FindLocation -> StatusView("Getting location data...")
 
-                GetApiData -> StatusView("Getting sunrise and weather data...")
+            GetApiData -> StatusView("Getting sunrise and weather data...")
 
-                Init -> Unit
+            Init -> Unit
 
-                is RequestPermissions -> Text("Requesting permissions...")
+            is RequestPermissions -> Text("Requesting permissions...")
 
-                is Success -> SuccessScreen(
-                    data = it.results,
-                    onSetAlarm = { appLogic.setAlarm(it.results.alarmTime) },
-                    onSwitchSunrise = {
-                        scope.launch {
-                            it.onSwitchSunrise()
-                        }
+            is Success -> SuccessScreen(
+                data = localStatus.results,
+                onSetAlarm = { appLogic.setAlarm(localStatus.results.alarmTime) },
+                onSwitchSunrise = {
+                    scope.launch {
+                        localStatus.onSwitchSunrise()
                     }
-                )
-
-                Error -> Box(
-                    modifier = Modifier.clickable { appLogic.startAppFlow() }
-                ) {
-                    StatusView("Error retrieving data.")
                 }
+            )
+
+            Error -> Box(
+                modifier = Modifier.clickable { appLogic.startAppFlow() }
+            ) {
+                StatusView("Error retrieving data.")
             }
         }
     }
