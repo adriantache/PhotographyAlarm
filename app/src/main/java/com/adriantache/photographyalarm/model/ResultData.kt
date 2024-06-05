@@ -63,15 +63,15 @@ data class ResultData(
             return ResultData(
                 isSunrise = isSunrise,
                 sunrise = SunriseResultSummary(
-                    firstLight = SunriseResultData(time = sunriseData.firstLight, iconRes = R.drawable.noun_sunrise_6475878),
-                    dawn = SunriseResultData(time = sunriseData.dawn, iconRes = R.drawable.noun_dawn_6475869),
+                    firstLight = sunriseData.firstLight?.let { SunriseResultData(time = it, iconRes = R.drawable.noun_sunrise_6475878) },
+                    dawn = sunriseData.dawn?.let { SunriseResultData(time = it, iconRes = R.drawable.noun_dawn_6475869) },
                     sunrise = SunriseResultData(time = sunriseData.sunrise, iconRes = R.drawable.noun_sun_6475868),
                     weather = getWeather(sunriseData.sunrise, weatherPoints),
                 ),
                 sunset = SunsetResultSummary(
                     sunset = SunriseResultData(time = sunriseData.sunset, iconRes = R.drawable.noun_sun_6475868),
-                    dusk = SunriseResultData(time = sunriseData.dusk, iconRes = R.drawable.noun_dusk_6475877),
-                    lastLight = SunriseResultData(time = sunriseData.lastLight, iconRes = R.drawable.noun_sunrise_6475878),
+                    dusk = sunriseData.dusk?.let { SunriseResultData(time = it, iconRes = R.drawable.noun_dusk_6475877) },
+                    lastLight = sunriseData.lastLight?.let { SunriseResultData(time = it, iconRes = R.drawable.noun_sunrise_6475878) },
                     weather = getWeather(sunriseData.sunset, weatherPoints),
                 ),
             )

@@ -16,11 +16,11 @@ data class SunriseResponse(
             SunriseInfo(
                 sunrise = parseDate(sunrise, timezone, tomorrow) ?: return null,
                 sunset = parseDate(sunset, timezone, tomorrow) ?: return null,
-                firstLight = parseDate(first_light, timezone, tomorrow) ?: return null,
-                lastLight = parseDate(last_light, timezone, tomorrow) ?: return null,
-                dawn = parseDate(dawn, timezone, tomorrow) ?: return null,
-                dusk = parseDate(dusk, timezone, tomorrow) ?: return null,
-                solarNoon = parseDate(solar_noon, timezone, tomorrow) ?: return null,
+                firstLight = first_light?.let { parseDate(it, timezone, tomorrow) },
+                lastLight = last_light?.let { parseDate(it, timezone, tomorrow) },
+                dawn = dawn?.let { parseDate(it, timezone, tomorrow) },
+                dusk = dusk?.let { parseDate(it, timezone, tomorrow) },
+                solarNoon = solar_noon?.let { parseDate(it, timezone, tomorrow) },
                 dayLength = day_length,
             )
         }
@@ -32,12 +32,12 @@ data class SunriseResponse(
 data class SunriseResponseData(
     val sunrise: String,
     val sunset: String,
-    val first_light: String,
-    val last_light: String,
-    val dawn: String,
-    val dusk: String,
-    val solar_noon: String,
-    val day_length: String,
+    val first_light: String?,
+    val last_light: String?,
+    val dawn: String?,
+    val dusk: String?,
+    val solar_noon: String?,
+    val day_length: String?,
     val timezone: String,
-    val utc_offset: Int,
+    val utc_offset: Int?,
 )

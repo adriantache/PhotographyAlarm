@@ -23,33 +23,37 @@ fun SunriseView(sunrise: SunriseResultSummary) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SunriseItemView(
-                iconRes = sunrise.firstLight.iconRes,
-                time = sunrise.firstLight.time
-            )
+            sunrise.firstLight?.let {
+                SunriseItemView(
+                    iconRes = sunrise.firstLight.iconRes,
+                    time = sunrise.firstLight.time
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "...",
-                style = MaterialTheme.typography.headlineMedium
-            )
+                Text(
+                    text = "...",
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
+            }
 
-            SunriseItemView(
-                iconRes = sunrise.dawn.iconRes,
-                time = sunrise.dawn.time
-            )
+            sunrise.dawn?.let {
+                SunriseItemView(
+                    iconRes = sunrise.dawn.iconRes,
+                    time = sunrise.dawn.time
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "...",
-                style = MaterialTheme.typography.headlineMedium
-            )
+                Text(
+                    text = "...",
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
+            }
 
             SunriseItemView(
                 iconRes = sunrise.sunrise.iconRes,

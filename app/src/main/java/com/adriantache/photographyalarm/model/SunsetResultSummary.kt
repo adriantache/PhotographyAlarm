@@ -8,12 +8,12 @@ import java.time.LocalTime
 @Serializable
 data class SunsetResultSummary(
     val sunset: SunriseResultData,
-    val dusk: SunriseResultData,
-    val lastLight: SunriseResultData,
+    val dusk: SunriseResultData?,
+    val lastLight: SunriseResultData?,
     val weather: WeatherResultSummary,
 ) {
     @Transient
-    private val list = listOf(sunset, dusk, lastLight).map { it.timestamp } +
+    private val list = listOfNotNull(sunset, dusk, lastLight).map { it.timestamp } +
             listOf(weather.before, weather.closest, weather.after).map { it.timestamp }
 
     @Serializable(LocalTimeAsLongSerializer::class)

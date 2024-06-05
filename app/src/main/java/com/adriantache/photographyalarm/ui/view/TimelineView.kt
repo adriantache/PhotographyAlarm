@@ -53,39 +53,45 @@ fun TimelineView(data: ResultData) {
                 screenWidth = it.size.width
             }
         ) {
-
             val firstPoint = if (data.isSunrise) data.sunrise.firstLight else data.sunset.sunset
-            val offset1 = data.getPercent(firstPoint.timestamp)
-            Icon(
-                modifier = Modifier
-                    .requiredSize(48.dp)
-                    .offset(y = 0.dp, x = (screenWidthDp * offset1 - 48 * offset1).dp),
-                painter = painterResource(id = firstPoint.iconRes),
-                contentDescription = null,
-                tint = darkColor,
-            )
+
+            firstPoint?.let {
+                val offset1 = data.getPercent(firstPoint.timestamp)
+                Icon(
+                    modifier = Modifier
+                        .requiredSize(48.dp)
+                        .offset(y = 0.dp, x = (screenWidthDp * offset1 - 48 * offset1).dp),
+                    painter = painterResource(id = firstPoint.iconRes),
+                    contentDescription = null,
+                    tint = darkColor,
+                )
+            }
 
             val secondPoint = if (data.isSunrise) data.sunrise.dawn else data.sunset.dusk
-            val offset2 = data.getPercent(secondPoint.timestamp)
-            Icon(
-                modifier = Modifier
-                    .requiredSize(48.dp)
-                    .offset(y = 0.dp, x = (screenWidthDp * offset2 - 48 * offset2).dp),
-                painter = painterResource(id = secondPoint.iconRes),
-                contentDescription = null,
-                tint = darkColor,
-            )
+            secondPoint?.let {
+                val offset2 = data.getPercent(secondPoint.timestamp)
+                Icon(
+                    modifier = Modifier
+                        .requiredSize(48.dp)
+                        .offset(y = 0.dp, x = (screenWidthDp * offset2 - 48 * offset2).dp),
+                    painter = painterResource(id = secondPoint.iconRes),
+                    contentDescription = null,
+                    tint = darkColor,
+                )
+            }
 
             val thirdPoint = if (data.isSunrise) data.sunrise.sunrise else data.sunset.lastLight
-            val offset3 = data.getPercent(thirdPoint.timestamp)
-            Icon(
-                modifier = Modifier
-                    .requiredSize(48.dp)
-                    .offset(y = 0.dp, x = (screenWidthDp * offset3 - 48 * offset3).dp),
-                painter = painterResource(id = thirdPoint.iconRes),
-                contentDescription = null,
-                tint = darkColor,
-            )
+            thirdPoint?.let {
+                val offset3 = data.getPercent(thirdPoint.timestamp)
+                Icon(
+                    modifier = Modifier
+                        .requiredSize(48.dp)
+                        .offset(y = 0.dp, x = (screenWidthDp * offset3 - 48 * offset3).dp),
+                    painter = painterResource(id = thirdPoint.iconRes),
+                    contentDescription = null,
+                    tint = darkColor,
+                )
+            }
         }
 
         Spacer(Modifier.height(8.dp))

@@ -28,33 +28,37 @@ fun SunsetView(sunset: SunsetResultSummary) {
                 time = sunset.sunset.time
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            sunset.dusk?.let {
+                Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "...",
-                style = MaterialTheme.typography.headlineMedium
-            )
+                Text(
+                    text = "...",
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            SunriseItemView(
-                iconRes = sunset.dusk.iconRes,
-                time = sunset.dusk.time
-            )
+                SunriseItemView(
+                    iconRes = sunset.dusk.iconRes,
+                    time = sunset.dusk.time
+                )
+            }
 
-            Spacer(modifier = Modifier.weight(1f))
+            sunset.lastLight?.let {
+                Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "...",
-                style = MaterialTheme.typography.headlineMedium
-            )
+                Text(
+                    text = "...",
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            SunriseItemView(
-                iconRes = sunset.lastLight.iconRes,
-                time = sunset.lastLight.time
-            )
+                SunriseItemView(
+                    iconRes = sunset.lastLight.iconRes,
+                    time = sunset.lastLight.time
+                )
+            }
         }
     }
 }
